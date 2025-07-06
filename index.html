@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Room Reminder</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <h2>Room Issue Tracker</h2>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>ROOM</th>
+        <th>ISSUE</th>
+        <th>Lokasi</th>
+        <th>Building</th>
+        <th>EXP Date</th>
+        <th>Entirety Room</th>
+        <th>Done Date</th>
+        <th>FU By</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Diisi lewat JS -->
+    </tbody>
+  </table>
+
+  <script>
+    const data = [
+      {
+        room: "188",
+        issue: "Project rectification bad smell issue",
+        lokasi: "IND",
+        building: "A",
+        expDate: "06-07-2025",
+        entiretyRoom: "Completed",
+        doneDate: "2025-07-07",
+        fuBy: "TJS",
+        remarks: "On progress repair bad smell issue"
+      }
+    ];
+
+    function mintaIzinNotifikasi() {
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector("#dataTable tbody");
+      tbody.innerHTML = "";
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      data.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.room}</td>
+          <td>${item.issue}</td>
+          <td>${item.lokasi}</td>
+          <td>${item.building}</td>
+          <td>${item.expDate}</td>
+          <td>${item.entiretyRoom}</td>
+          <td>${item.doneDate}</td>
+          <td>${item.fuBy}</td>
+          <td>${item.remarks}</td>
+        `;
+        tbody.appendChild(tr);
+
+        const exp = new Date(item.expDate);
+        exp.setHours(0, 0, 0, 0);
+
+        if (exp <= today) {
+          // Kirim notifikasi yang lebih detail
+          const title = `⏰ ROOM ${item.room} - Expired!`;
+          const body = 
+`📝 Issue: ${item.issue}
+📍 Lokasi: ${item.lokasi} - Bldg ${item.building}
+📅 EXP Date: ${item.expDate}
+📌 Remarks: ${item.remarks}`;
+
+          new Notification(title, {
+            body: body,
+            icon: "https://cdn-icons-png.flaticon.com/512/1827/1827349.png"
+          });
+        }
+      });
+    }
+
+    window.onload = () => {
+      mintaIzinNotifikasi();
+      renderTable();
+    };
+  </script>
+</body>
+</html>
